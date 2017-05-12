@@ -694,7 +694,7 @@ sampleN_lazy n = take n . sample_lazy
 --
 -- __NB__: This function is not synthesisable
 fromList_lazy :: [a] -> Signal' clk a
-fromList_lazy = Prelude.foldr (:-) (error "finite list")
+fromList_lazy = Prelude.foldr (:-) (error "finite list") --TODO should be errorX just as fromList?
 
 -- * Simulation functions (not synthesisable)
 

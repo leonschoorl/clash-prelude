@@ -107,6 +107,7 @@ import GHC.TypeLits               (CmpNat, KnownNat, Nat, type (+), type (-), ty
                                    type (^), natVal)
 import GHC.Base                   (Int(I#),Int#,isTrue#)
 import GHC.Prim                   ((==#),(<#),(-#))
+import GHC.Stack                  (HasCallStack, withFrozenCallStack)
 import Language.Haskell.TH        (ExpQ)
 import Language.Haskell.TH.Syntax (Lift(..))
 import Prelude                    hiding ((++), (!!), concat, drop, foldl,
@@ -1009,7 +1010,7 @@ unzip3 xs = ( map (\(x,_,_) -> x) xs
             )
 {-# INLINE unzip3 #-}
 
-index_int :: KnownNat n => Vec n a -> Int -> a
+index_int :: (KnownNat n, HasCallStack) => Vec n a -> Int -> a
 index_int xs i@(I# n0)
   | isTrue# (n0 <# 0#) = error "CLaSH.Sized.Vector.(!!): negative index"
   | otherwise          = sub xs n0
@@ -1039,8 +1040,8 @@ index_int xs i@(I# n0)
 -- >>> (1:>2:>3:>4:>5:>Nil) !! 14
 -- *** Exception: CLaSH.Sized.Vector.(!!): index 14 is larger than maximum index 4
 -- ...
-(!!) :: (KnownNat n, Enum i) => Vec n a -> i -> a
-xs !! i = index_int xs (fromEnum i)
+(!!) :: (KnownNat n, Enum i, HasCallStack) => Vec n a -> i -> a
+xs !! i = withFrozenCallStack $ index_int xs (fromEnum i)
 {-# INLINE (!!) #-}
 
 -- | The index (subscript) of the last element in a 'Vec'tor as an 'Int'
@@ -1058,7 +1059,7 @@ length :: KnownNat n => Vec n a -> Int
 length = fromInteger . natVal . asNatProxy
 {-# NOINLINE length #-}
 
-replace_int :: KnownNat n => Vec n a -> Int -> a -> Vec n a
+replace_int :: (KnownNat n, HasCallStack) => Vec n a -> Int -> a -> Vec n a
 replace_int xs i@(I# n0) a
   | isTrue# (n0 <# 0#) = error "CLaSH.Sized.Vector.replace: negative index"
   | otherwise          = sub xs n0 a
@@ -1087,8 +1088,8 @@ replace_int xs i@(I# n0) a
 -- >>> replace 9 7 (1:>2:>3:>4:>5:>Nil)
 -- <1,2,3,4,*** Exception: CLaSH.Sized.Vector.replace: index 9 is larger than maximum index 4
 -- ...
-replace :: (KnownNat n, Enum i) => i -> a -> Vec n a -> Vec n a
-replace i y xs = replace_int xs (fromEnum i) y
+replace :: (KnownNat n, Enum i, HasCallStack) => i -> a -> Vec n a -> Vec n a
+replace i y xs = withFrozenCallStack $ replace_int xs (fromEnum i) y
 {-# INLINE replace #-}
 
 -- | \"'take' @n xs@\" returns the /n/-length prefix of /xs/.
@@ -1989,4 +1990,4 @@ instance CoArbitrary a => CoArbitrary (Vec n a) where
 type instance Lens.Index   (Vec n a) = Index n
 type instance Lens.IxValue (Vec n a) = a
 instance KnownNat n => Lens.Ixed (Vec n a) where
-  ix i f xs = replace_int xs (fromEnum i) <$> f (index_int xs (fromEnum i))
+  ix i f xs = replace_int xs (fromEnum i) <$> f (index_int xs (fromEnum i)) --TODO check error, add withFrozenCallStack?

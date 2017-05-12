@@ -199,7 +199,7 @@ bLit s = [|| fromInteger# i' ||]
     i' :: Integer
     i' = case i of
            Just j -> j
-           _      -> error "Failed to parse: " s
+           _      -> errorWithoutStackTrace "Failed to parse: " s
 
 instance Eq (BitVector n) where
   (==) = eq#
@@ -428,12 +428,12 @@ index# bv@(BV v) i
     | otherwise        = err
   where
     sz  = fromInteger (natVal bv)
-    err = error $ concat [ "(!): "
-                         , show i
-                         , " is out of range ["
-                         , show (sz - 1)
-                         , "..0]"
-                         ]
+    err = errorWithoutStackTrace $ concat [ "(!): "
+                                          , show i
+                                          , " is out of range ["
+                                          , show (sz - 1)
+                                          , "..0]"
+                                          ]
 
 {-# NOINLINE msb# #-}
 -- | MSB
@@ -484,12 +484,12 @@ replaceBit# bv@(BV v) i (BV b)
     | otherwise        = err
   where
     sz   = fromInteger (natVal bv)
-    err  = error $ concat [ "replaceBit: "
-                          , show i
-                          , " is out of range ["
-                          , show (sz - 1)
-                          , "..0]"
-                          ]
+    err  = errorWithoutStackTrace $ concat [ "replaceBit: "
+                                           , show i
+                                           , " is out of range ["
+                                           , show (sz - 1)
+                                           , "..0]"
+                                           ]
 
 {-# NOINLINE setSlice# #-}
 setSlice# :: BitVector (m + 1 + i) -> SNat m -> SNat n -> BitVector (m + 1 - n)
@@ -533,19 +533,19 @@ shiftL#, rotateL#, rotateR# :: KnownNat n
 
 {-# NOINLINE shiftL# #-}
 shiftL# (BV v) i
-  | i < 0     = error
+  | i < 0     = errorWithoutStackTrace
               $ "'shiftL undefined for negative number: " ++ show i
   | otherwise = fromInteger_INLINE (shiftL v i)
 
 {-# NOINLINE shiftR# #-}
 shiftR# :: BitVector n -> Int -> BitVector n
 shiftR# (BV v) i
-  | i < 0     = error
+  | i < 0     = errorWithoutStackTrace
               $ "'shiftR undefined for negative number: " ++ show i
   | otherwise = BV (shiftR v i)
 
 {-# NOINLINE rotateL# #-}
-rotateL# _ b | b < 0 = error "'rotateL undefined for negative numbers"
+rotateL# _ b | b < 0 = errorWithoutStackTrace "'rotateL undefined for negative numbers"
 rotateL# bv@(BV n) b   = fromInteger_INLINE (l .|. r)
   where
     l    = shiftL n b'
@@ -556,7 +556,7 @@ rotateL# bv@(BV n) b   = fromInteger_INLINE (l .|. r)
     sz   = fromInteger (natVal bv)
 
 {-# NOINLINE rotateR# #-}
-rotateR# _ b | b < 0 = error "'rotateR undefined for negative numbers"
+rotateR# _ b | b < 0 = errorWithoutStackTrace "'rotateR undefined for negative numbers"
 rotateR# bv@(BV n) b   = fromInteger_INLINE (l .|. r)
   where
     l   = shiftR n b'

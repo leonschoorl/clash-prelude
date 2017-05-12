@@ -361,19 +361,19 @@ complement# (U i) = fromInteger_INLINE (complement i)
 shiftL#, rotateL#, rotateR# :: KnownNat n => Unsigned n -> Int -> Unsigned n
 {-# NOINLINE shiftL# #-}
 shiftL# (U v) i
-  | i < 0     = error
+  | i < 0     = errorWithoutStackTrace
               $ "'shiftL undefined for negative number: " ++ show i
   | otherwise = fromInteger_INLINE (shiftL v i)
 
 {-# NOINLINE shiftR# #-}
 shiftR# :: Unsigned n -> Int -> Unsigned n
 shiftR# (U v) i
-  | i < 0     = error
+  | i < 0     = errorWithoutStackTrace
               $ "'shiftR undefined for negative number: " ++ show i
   | otherwise = U (shiftR v i)
 
 {-# NOINLINE rotateL# #-}
-rotateL# _ b | b < 0 = error "'rotateL undefined for negative numbers"
+rotateL# _ b | b < 0 = errorWithoutStackTrace "'rotateL undefined for negative numbers"
 rotateL# bv@(U n) b   = fromInteger_INLINE (l .|. r)
   where
     l    = shiftL n b'
@@ -384,7 +384,7 @@ rotateL# bv@(U n) b   = fromInteger_INLINE (l .|. r)
     sz   = fromInteger (natVal bv)
 
 {-# NOINLINE rotateR# #-}
-rotateR# _ b | b < 0 = error "'rotateR undefined for negative numbers"
+rotateR# _ b | b < 0 = errorWithoutStackTrace "'rotateR undefined for negative numbers"
 rotateR# bv@(U n) b   = fromInteger_INLINE (l .|. r)
   where
     l   = shiftR n b'

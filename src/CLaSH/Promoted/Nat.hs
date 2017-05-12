@@ -178,6 +178,7 @@ predUNat (USucc x) = x
 -- | Subtract two unary-encoded natural numbers
 --
 -- __NB__: Not synthesisable
+-- TODO: add HasCallStack/errorWithoutStackTrace?
 subUNat :: UNat (m+n) -> UNat n -> UNat m
 subUNat x         UZero     = x
 subUNat (USucc x) (USucc y) = subUNat x y
@@ -364,6 +365,7 @@ succBNat (B1 a) = B0 (succBNat a)
 -- | Predecessor of a base-2 encoded natural number
 --
 -- __NB__: Not synthesisable
+-- TODO: add HasCallStack/errorWithoutStackTrace?
 predBNat :: BNat (n+1) -> (BNat n)
 predBNat (B1 a) = case stripZeros a of
   BT -> BT
@@ -380,6 +382,7 @@ predBNat (B0 x)  = B1 (go x)
 -- | Divide a base-2 encoded natural number by 2
 --
 -- __NB__: Not synthesisable
+-- TODO: add HasCallStack/errorWithoutStackTrace?
 div2BNat :: BNat (2*n) -> BNat n
 div2BNat BT     = BT
 div2BNat (B0 x) = x
@@ -388,6 +391,7 @@ div2BNat (B1 _) = error "impossible: 2*n ~ 2*n+1"
 -- | Subtract 1 and divide a base-2 encoded natural number by 2
 --
 -- __NB__: Not synthesisable
+-- TODO: add HasCallStack/errorWithoutStackTrace?
 div2Sub1BNat :: BNat (2*n+1) -> BNat n
 div2Sub1BNat (B1 x) = x
 div2Sub1BNat _      = error "impossible: 2*n+1 ~ 2*n"
@@ -395,6 +399,7 @@ div2Sub1BNat _      = error "impossible: 2*n+1 ~ 2*n"
 -- | Get the log2 of a base-2 encoded natural number
 --
 -- __NB__: Not synthesisable
+-- TODO: add HasCallStack/errorWithoutStackTrace?
 log2BNat :: BNat (2^n) -> BNat n
 log2BNat (B1 x) = case stripZeros x of
   BT -> BT

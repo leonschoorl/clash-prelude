@@ -226,8 +226,8 @@ fromInteger_INLINE :: forall n . KnownNat n => Integer -> Index n
 fromInteger_INLINE i = bound `seq` if i > (-1) && i < bound then I i else err
   where
     bound = natVal (Proxy @n)
-    err   = error ("CLaSH.Sized.Index: result " ++ show i ++
-                   " is out of bounds: [0.." ++ show (bound - 1) ++ "]")
+    err   = errorWithoutStackTrace ("CLaSH.Sized.Index: result " ++ show i ++
+                                    " is out of bounds: [0.." ++ show (bound - 1) ++ "]")
 
 instance ExtendingNum (Index m) (Index n) where
   type AResult (Index m) (Index n) = Index (m + n - 1)
@@ -243,7 +243,7 @@ plus# (I a) (I b) = I (a + b)
 {-# NOINLINE minus# #-}
 minus# (I a) (I b) =
   let z   = a - b
-      err = error ("CLaSH.Sized.Index.minus: result " ++ show z ++
+      err = errorWithoutStackTrace ("CLaSH.Sized.Index.minus: result " ++ show z ++
                    " is smaller than 0")
       res = if z < 0 then err else I z
   in  res

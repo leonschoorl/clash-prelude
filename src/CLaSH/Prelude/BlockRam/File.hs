@@ -302,5 +302,5 @@ initMem = fmap (map parseBV . lines) . readFile
   where
     parseBV s = case parseBV' s of
                   Just i  -> fromInteger i
-                  Nothing -> error ("Failed to parse: " ++ s)
+                  Nothing -> errorWithoutStackTrace ("Failed to parse: " ++ s)
     parseBV' = fmap fst . listToMaybe . readInt 2 (`elem` "01") digitToInt

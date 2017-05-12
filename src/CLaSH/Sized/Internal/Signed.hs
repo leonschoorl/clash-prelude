@@ -381,13 +381,13 @@ complement# (S a) = fromInteger_INLINE (complement a)
 
 shiftL#,shiftR#,rotateL#,rotateR# :: KnownNat n => Signed n -> Int -> Signed n
 {-# NOINLINE shiftL# #-}
-shiftL# _ b | b < 0  = error "'shiftL undefined for negative numbers"
+shiftL# _ b | b < 0  = errorWithoutStackTrace "'shiftL undefined for negative numbers"
 shiftL# (S n) b      = fromInteger_INLINE (shiftL n b)
 {-# NOINLINE shiftR# #-}
-shiftR# _ b | b < 0  = error "'shiftR undefined for negative numbers"
+shiftR# _ b | b < 0  = errorWithoutStackTrace "'shiftR undefined for negative numbers"
 shiftR# (S n) b      = fromInteger_INLINE (shiftR n b)
 {-# NOINLINE rotateL# #-}
-rotateL# _ b | b < 0 = error "'rotateL undefined for negative numbers"
+rotateL# _ b | b < 0 = errorWithoutStackTrace "'rotateL undefined for negative numbers"
 rotateL# s@(S n) b   = fromInteger_INLINE (l .|. r)
   where
     l    = shiftL n b'
@@ -399,7 +399,7 @@ rotateL# s@(S n) b   = fromInteger_INLINE (l .|. r)
     sz   = fromInteger (natVal s)
 
 {-# NOINLINE rotateR# #-}
-rotateR# _ b | b < 0 = error "'rotateR undefined for negative numbers"
+rotateR# _ b | b < 0 = errorWithoutStackTrace "'rotateR undefined for negative numbers"
 rotateR# s@(S n) b   = fromInteger_INLINE (l .|. r)
   where
     l    = shiftR n b' .&. mask
