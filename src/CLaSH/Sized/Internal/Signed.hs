@@ -387,7 +387,7 @@ shiftL# (S n) b      = fromInteger_INLINE (shiftL n b)
 shiftR# _ b | b < 0  = error "'shiftR undefined for negative numbers"
 shiftR# (S n) b      = fromInteger_INLINE (shiftR n b)
 {-# NOINLINE rotateL# #-}
-rotateL# _ b | b < 0 = error "'shiftL undefined for negative numbers"
+rotateL# _ b | b < 0 = error "'rotateL undefined for negative numbers"
 rotateL# s@(S n) b   = fromInteger_INLINE (l .|. r)
   where
     l    = shiftL n b'
@@ -399,7 +399,7 @@ rotateL# s@(S n) b   = fromInteger_INLINE (l .|. r)
     sz   = fromInteger (natVal s)
 
 {-# NOINLINE rotateR# #-}
-rotateR# _ b | b < 0 = error "'shiftR undefined for negative numbers"
+rotateR# _ b | b < 0 = error "'rotateR undefined for negative numbers"
 rotateR# s@(S n) b   = fromInteger_INLINE (l .|. r)
   where
     l    = shiftR n b' .&. mask

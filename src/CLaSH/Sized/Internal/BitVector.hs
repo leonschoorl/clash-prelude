@@ -545,7 +545,7 @@ shiftR# (BV v) i
   | otherwise = BV (shiftR v i)
 
 {-# NOINLINE rotateL# #-}
-rotateL# _ b | b < 0 = error "'shiftL undefined for negative numbers"
+rotateL# _ b | b < 0 = error "'rotateL undefined for negative numbers"
 rotateL# bv@(BV n) b   = fromInteger_INLINE (l .|. r)
   where
     l    = shiftL n b'
@@ -556,7 +556,7 @@ rotateL# bv@(BV n) b   = fromInteger_INLINE (l .|. r)
     sz   = fromInteger (natVal bv)
 
 {-# NOINLINE rotateR# #-}
-rotateR# _ b | b < 0 = error "'shiftR undefined for negative numbers"
+rotateR# _ b | b < 0 = error "'rotateR undefined for negative numbers"
 rotateR# bv@(BV n) b   = fromInteger_INLINE (l .|. r)
   where
     l   = shiftR n b'
